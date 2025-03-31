@@ -7,7 +7,7 @@ using SFS.UI;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Patches
 {
     [HarmonyPatch(typeof(Units))]
     internal class UnitsPatches

@@ -14,7 +14,7 @@ using UnityEngine.UI;
 using VanillaUpgrades.Utility;
 using Button = SFS.UI.Button;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     public static class MissionLogButton
     {

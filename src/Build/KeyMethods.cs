@@ -2,7 +2,7 @@
 using SFS;
 using SFS.Builds;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Build
 {
     [HarmonyPatch(typeof(PickCategoriesMenu), "Start")]
     public static class KeyMethods

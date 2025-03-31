@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using VanillaUpgrades.Utility;
 using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     partial class AdvancedInfo
     {

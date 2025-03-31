@@ -4,7 +4,7 @@ using SFS.World;
 using SFS.World.Maps;
 using SFS.WorldBase;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch]
     public class StopTimewarpOnEncounter

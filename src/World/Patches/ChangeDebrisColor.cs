@@ -10,7 +10,7 @@ using SFS.World.Maps;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedMember.Global
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch(typeof(MapIcon), "UpdateAlpha")]
     internal static class Alpha

@@ -7,9 +7,10 @@ using SFS.UI.ModGUI;
 using SFS.World;
 using UnityEngine;
 using VanillaUpgrades.Utility;
+using VanillaUpgrades.World.Patches;
 using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     public static partial class AdvancedInfo
     {

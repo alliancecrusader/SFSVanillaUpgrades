@@ -4,7 +4,7 @@ using SFS.UI;
 using SFS.World;
 using UnityEngine;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     internal static class HoverHandler
     {

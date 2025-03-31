@@ -9,7 +9,7 @@ using SFS.Parsers.Json;
 using SFS.World;
 using UnityEngine;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     [HarmonyPatch(typeof(GameManager), "Update")]
     internal static class AutosaveHandler

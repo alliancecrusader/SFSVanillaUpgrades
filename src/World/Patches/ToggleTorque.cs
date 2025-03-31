@@ -5,7 +5,7 @@ using SFS.World;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch(typeof(Rocket), "GetTorque")]
     public static class ToggleTorque

@@ -8,6 +8,8 @@ using SFS.UI;
 using TMPro;
 using UITools;
 using UnityEngine;
+using VanillaUpgrades.Build;
+using VanillaUpgrades.World;
 using Console = ModLoader.IO.Console;
 using Object = UnityEngine.Object;
 
@@ -26,7 +28,7 @@ namespace VanillaUpgrades
 
         public static FolderPath modFolder;
 
-        private int modCount = 2;
+        private static int modCount = 2;
         public override string ModNameID => "VanUp";
         public override string DisplayName => "Vanilla Upgrades";
         public override string Author => "NeptuneSky";
@@ -50,36 +52,40 @@ namespace VanillaUpgrades
 
         public override void Early_Load()
         {
-            inst = this;
-            modFolder = new FolderPath(ModFolder);
-            patcher = new Harmony("mods.ASoD.VanUp");
-            patcher.PatchAll();
-            SubscribeToScenes();
-            Application.quitting += OnQuit;
-            Config.Load();
+            try
+            {
+                inst = this;
+                modFolder = new FolderPath(ModFolder);
+                patcher = new Harmony("mods.NeptuneSky.VanUp");
+                patcher.PatchAll();
+                SubscribeToScenes();
+                Application.quitting += OnQuit;
+                Config.Load();
+                ConfigUI.Setup();
+                Application.runInBackground = Config.settings.allowBackgroundProcess;
+                Config.settings.allowBackgroundProcess.OnChange +=
+                    () => Application.runInBackground = Config.settings.allowBackgroundProcess;
+            }
+            catch (Exception e)
+            {
+                ErrorNotification.Error(e.Message);
+            }
         }
 
         public override void Load()
         {
             Console.commands.Add(Command);
-            ConfigUI.Setup();
-            Application.runInBackground = Config.settings.allowBackgroundProcess;
-            Config.settings.allowBackgroundProcess.OnChange +=
-                () => Application.runInBackground = Config.settings.allowBackgroundProcess;
-            mainObject = new GameObject("ASoDMainObject", typeof(ErrorNotification));
+            
+            mainObject = new GameObject("NeptuneMainObject", typeof(ErrorNotification));
             Object.DontDestroyOnLoad(mainObject);
             mainObject.SetActive(true);
-
-            GameObject version = GameObject.Find("Version");
-            if (!version) return;
-            modCount = Loader.main.GetLoadedMods().Length;
-
-            version.GetComponent<TextMeshProUGUI>().autoSizeTextContainer = true;
-            version.GetComponent<TextAdapter>().Text += " - Modded\n(" + modCount + " Mods Loaded)";
+            
+            UpdateVersionText();
         }
 
         private static void SubscribeToScenes()
         {
+            SceneHelper.OnHomeSceneLoaded += UpdateVersionText;
             SceneHelper.OnBuildSceneLoaded += BuildSettings.Setup;
             SceneHelper.OnWorldSceneLoaded += WorldManager.Setup;
         }
@@ -96,6 +102,16 @@ namespace VanillaUpgrades
 
             return true;
         }
+
+        private static void UpdateVersionText()
+        {
+            GameObject version = GameObject.Find("Version");
+            if (!version) return;
+            modCount = Loader.main.GetLoadedMods().Length;
+
+            version.GetComponent<TextMeshProUGUI>().autoSizeTextContainer = true;
+            version.GetComponent<TextAdapter>().Text += " - Modded\n(" + modCount + " Mods Loaded)";
+        }
     }
 
     [HarmonyPatch(typeof(Loader), "Initialize_Load")]
@@ -108,7 +124,7 @@ namespace VanillaUpgrades
             if (___loadedMods.FindIndex(e => e.ModNameID == "BuildSettings") == -1) return;
             Main.buildSettingsPresent = true;
             Debug.Log(
-                "VanillaUpgrades: BuildSettings mod was detected, disabling own Build Settings features to avoid conflicts.");
+                "[VanillaUpgrades] BuildSettings mod was detected, disabling own Build Settings features to avoid conflicts.");
         }
     }
 }

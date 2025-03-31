@@ -1,7 +1,7 @@
 using HarmonyLib;
 using SFS.World;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch(typeof(ThrottleDrawer))]
     public class ManageHoverMode

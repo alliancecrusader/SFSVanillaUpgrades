@@ -10,7 +10,7 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Patches
 {
     [HarmonyPatch(typeof(FlightInfoDrawer), "Update")]
     internal static class DisplayAccurateThrustAndLocalTWR

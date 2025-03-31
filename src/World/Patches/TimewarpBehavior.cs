@@ -3,7 +3,7 @@ using SFS.Translations;
 using SFS.UI;
 using SFS.World;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch(typeof(Rocket), "CanTimewarp")]
     internal class PhysicsTimewarpIfTurning

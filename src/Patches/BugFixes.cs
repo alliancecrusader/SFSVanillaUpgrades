@@ -8,7 +8,7 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Patches
 {
     // Stops the camera from zooming while the cursor isn't in the game window.
     [HarmonyPatch]

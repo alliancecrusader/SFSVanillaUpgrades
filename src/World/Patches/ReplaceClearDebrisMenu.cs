@@ -3,7 +3,7 @@ using SFS.Input;
 using SFS.UI;
 using SFS.World;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World.Patches
 {
     [HarmonyPatch(typeof(GameManager), "OpenClearDebrisMenu")]
     internal static class ReplaceClearDebrisMenu

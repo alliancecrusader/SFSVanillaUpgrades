@@ -14,7 +14,7 @@ using UnityEngine.SceneManagement;
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedMember.Global
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Patches
 {
     [HarmonyPatch(typeof(BasicMenu), nameof(BasicMenu.OnClose))]
     internal class UpdateConfigOnMenuClose

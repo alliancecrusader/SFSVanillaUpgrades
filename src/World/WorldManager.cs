@@ -1,9 +1,10 @@
 ﻿using System;
 using HarmonyLib;
 using SFS.World;
-using static VanillaUpgrades.HoverHandler;
+using VanillaUpgrades.World.Patches;
+using static VanillaUpgrades.World.HoverHandler;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     // Hook for things that need to run every frame in-game.
     [HarmonyPatch(typeof(GameManager))]

@@ -3,6 +3,9 @@ using ModLoader.Helpers;
 using SFS;
 using SFS.Builds;
 using UnityEngine;
+using VanillaUpgrades.Build;
+using VanillaUpgrades.World;
+using VanillaUpgrades.World.Patches;
 using static SFS.Input.KeybindingsPC;
 
 // ReSharper disable MemberCanBePrivate.Global

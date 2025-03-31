@@ -4,7 +4,7 @@ using UnityEngine;
 using Button = SFS.UI.ModGUI.Button;
 using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Build
 {
     public static class BuildSettings
     {

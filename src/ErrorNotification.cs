@@ -7,19 +7,19 @@ namespace VanillaUpgrades
 {
     public class ErrorNotification : MonoBehaviour
     {
-        private static readonly StringBuilder errors = new();
+        private static readonly StringBuilder Errors = new();
 
         private void Start()
         {
-            if (errors.Length == 0) return;
-            errors.Insert(0,
+            if (Errors.Length == 0) return;
+            Errors.Insert(0,
                 "An error occured while loading VanillaUpgrades." + Environment.NewLine + Environment.NewLine);
-            Menu.read.ShowReport(errors, () => errors.Clear());
+            Menu.read.ShowReport(Errors, () => Errors.Clear());
         }
 
         public static void Error(string error)
         {
-            errors.AppendLine($"- {error}");
+            Errors.AppendLine($"- {error}");
         }
     }
 }

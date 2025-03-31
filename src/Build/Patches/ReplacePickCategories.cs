@@ -10,7 +10,7 @@ using static SFS.UI.ModGUI.Builder;
 using Button = SFS.UI.ModGUI.Button;
 using Type = SFS.UI.ModGUI.Type;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Build
 {
     [HarmonyPatch(typeof(PickCategoriesMenu))]
     internal static class ReplacePickCategories

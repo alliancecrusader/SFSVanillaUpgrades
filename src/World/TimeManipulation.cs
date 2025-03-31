@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using SFS.UI;
 using SFS.World;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     [HarmonyPatch]
     internal static class TimeDecelerationPatch

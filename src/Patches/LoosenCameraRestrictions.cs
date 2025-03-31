@@ -5,7 +5,7 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.Patches
 {
     [HarmonyPatch(typeof(PlayerController))]
     internal class LoosenCameraRestrictions

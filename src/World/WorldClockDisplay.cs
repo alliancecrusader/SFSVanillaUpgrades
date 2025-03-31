@@ -7,7 +7,7 @@ using VanillaUpgrades.Utility;
 using Type = SFS.UI.ModGUI.Type;
 using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     internal static class WorldClockDisplay
     {

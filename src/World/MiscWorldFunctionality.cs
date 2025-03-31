@@ -1,9 +1,9 @@
 using SFS.UI;
 using SFS.World;
 using UnityEngine;
-using static VanillaUpgrades.HoverHandler;
+using static VanillaUpgrades.World.HoverHandler;
 
-namespace VanillaUpgrades
+namespace VanillaUpgrades.World
 {
     internal static partial class WorldManager
     {
