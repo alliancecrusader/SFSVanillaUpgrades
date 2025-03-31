@@ -118,8 +118,6 @@ namespace VanillaUpgrades
                     newStats["AngleTitle"] = Object.transform.GetChild(0).gameObject.GetComponent<TextAdapter>();
                 }
             }
-
-            ;
         }
     }
 }
