@@ -81,12 +81,7 @@ namespace VanillaUpgrades
         private static void SubscribeToScenes()
         {
             SceneHelper.OnBuildSceneLoaded += BuildSettings.Setup;
-            SceneHelper.OnWorldSceneLoaded += () =>
-            {
-                WorldManager.Setup();
-                MissionLogButton.Create();
-                new GameObject("ASoDWorldObject", typeof(AdvancedInfo), typeof(WorldClockDisplay));
-            };
+            SceneHelper.OnWorldSceneLoaded += WorldManager.Setup;
         }
 
         private static void OnQuit()

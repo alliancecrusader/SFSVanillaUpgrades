@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using ModLoader.Helpers;
 using SFS.UI;
 using SFS.UI.ModGUI;
 using SFS.World;
@@ -10,7 +11,7 @@ using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
 namespace VanillaUpgrades
 {
-    public partial class AdvancedInfo : MonoBehaviour
+    public static partial class AdvancedInfo
     {
         private const string PositionKey = "VU.AdvancedInfoWindow";
 
@@ -25,11 +26,11 @@ namespace VanillaUpgrades
 
         private static readonly List<GameObject> infoObjects = new();
 
-        public GameObject windowHolder;
-        private Window advancedInfoWindow;
-        private Container horizontal;
+        public static GameObject windowHolder;
+        private static Window advancedInfoWindow;
+        private static Container horizontal;
 
-        private Dictionary<string, Label> infoLabels = new()
+        private static Dictionary<string, Label> infoLabels = new()
         {
             { "apopsisHorizontal", null },
             { "apoapsisVertical", null },
@@ -43,9 +44,9 @@ namespace VanillaUpgrades
             { "angleTitleVertical", null }
         };
 
-        private Container vertical;
+        private static Container vertical;
 
-        private void Awake()
+        public static void Setup()
         {
             windowHolder = UIExtensions.ZeroedHolder(Builder.SceneToAttach.CurrentScene, "AdvancedInfoHolder");
 
@@ -63,9 +64,12 @@ namespace VanillaUpgrades
             Config.settings.showAdvancedInSeparateWindow.OnChange += OnToggle;
 
             OnToggle();
+
+            UpdateInGame.execute += Update;
+            SceneHelper.OnWorldSceneUnloaded += OnDestroy;
         }
 
-        private void Update()
+        private static void Update()
         {
             if (WorldManager.currentRocket == null) return;
             if (Config.settings.showAdvancedInSeparateWindow)
@@ -73,7 +77,7 @@ namespace VanillaUpgrades
             else RefreshLabels(newStats);
         }
 
-        private void OnDestroy()
+        private static void OnDestroy()
         {
             infoObjects.Clear();
             PlayerController.main.player.OnChange -= OnPlayerChange;
@@ -105,14 +109,14 @@ namespace VanillaUpgrades
             };
         }
 
-        private void OnPlayerChange()
+        private static void OnPlayerChange()
         {
             if (PlayerController.main == null) return;
             OnToggle();
             ToggleTorque.Set(false);
         }
 
-        private void OnToggle()
+        private static void OnToggle()
         {
             if (PlayerController.main == null) return;
             var value = WorldManager.currentRocket != null && Config.settings.showAdvanced;
@@ -120,7 +124,7 @@ namespace VanillaUpgrades
             infoObjects.ForEach(e => e.SetActive(value && !Config.settings.showAdvancedInSeparateWindow));
         }
 
-        private void CheckHorizontalToggle()
+        private static void CheckHorizontalToggle()
         {
             if (Config.settings.horizontalMode)
             {

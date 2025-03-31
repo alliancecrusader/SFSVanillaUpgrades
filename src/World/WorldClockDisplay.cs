@@ -9,25 +9,25 @@ using UIExtensions = VanillaUpgrades.Utility.UIExtensions;
 
 namespace VanillaUpgrades
 {
-    public class WorldClockDisplay : MonoBehaviour
+    internal static class WorldClockDisplay
     {
         private const string PositionKey = "VU.WorldClockWindow";
 
         private const string defaultTime = "000d 00h 00m 00s";
 
-        public double subtractor;
-        private GameObject clockHolder;
-        private Window clockWindow;
+        private static double subtractor;
+        private static GameObject clockHolder;
+        private static Window clockWindow;
 
-        private string timestamp;
-        private Container timewarpContainer;
-        private string timewarpTime;
+        private static string timestamp;
+        private static Container timewarpContainer;
+        private static string timewarpTime;
 
-        private Label timewarpTimeLabel;
-        private Container worldTimeContainer;
-        private Label worldTimeLabel;
+        private static Label timewarpTimeLabel;
+        private static Container worldTimeContainer;
+        private static Label worldTimeLabel;
 
-        private void Awake()
+        public static void Setup()
         {
             clockHolder = UIExtensions.ZeroedHolder(Builder.SceneToAttach.CurrentScene, "Clock Holder");
             WorldTime.main.realtimePhysics.OnChange += OnTimewarpButton;
@@ -42,9 +42,11 @@ namespace VanillaUpgrades
                 clockWindow.ScaleWindow();
                 clockWindow.ClampWindow();
             };
+
+            UpdateInGame.execute += Update;
         }
 
-        public void Update()
+        private static void Update()
         {
             timestamp = TimeSpanConv(WorldTime.main.worldTime);
             timewarpTime = TimeSpanConv(WorldTime.main.worldTime - subtractor);
@@ -63,7 +65,7 @@ namespace VanillaUpgrades
             }
         }
 
-        private void ShowGUI()
+        private static void ShowGUI()
         {
             Vector2Int pos = new((int)UIExtensions.CanvasPixelSize.x, (int)UIExtensions.CanvasPixelSize.y - 70);
 
@@ -96,7 +98,7 @@ namespace VanillaUpgrades
             clockWindow.ClampWindow();
         }
 
-        private void OnTimewarpButton()
+        private static void OnTimewarpButton()
         {
             if (Config.settings.alwaysShowTime || !Config.settings.showTime) return;
             var timewarpIndex = WorldTime.main.timewarpIndex;
@@ -110,7 +112,7 @@ namespace VanillaUpgrades
             }
         }
 
-        private void ToggleChecks()
+        private static void ToggleChecks()
         {
             if (!Config.settings.showTime ||
                 (WorldTime.main.timewarpIndex == 0 && !Config.settings.alwaysShowTime))

@@ -13,7 +13,7 @@ namespace VanillaUpgrades
 {
     partial class AdvancedInfo
     {
-        private void CreateWindow()
+        private static void CreateWindow()
         {
             advancedInfoWindow = Builder.CreateWindow(windowHolder.gameObject.transform, 0, 220, 350, 200, 1200, true,
                 false, 1, "Advanced Info");
@@ -39,7 +39,7 @@ namespace VanillaUpgrades
             advancedInfoWindow.ClampWindow();
         }
 
-        private void VerticalGUI()
+        private static void VerticalGUI()
         {
             Builder.CreateSeparator(vertical, 205);
 
@@ -62,7 +62,7 @@ namespace VanillaUpgrades
             infoLabels["angleVertical"] = UIExtensions.AlignedLabel(vertical, 175, 30);
         }
 
-        private void HorizontalGUI()
+        private static void HorizontalGUI()
         {
             Builder.CreateSeparator(horizontal, 335);
             Container apoapsisContainer = Builder.CreateContainer(horizontal);
@@ -98,24 +98,24 @@ namespace VanillaUpgrades
             for (var i = 0; i < newStats.Count - 1; i++)
             {
                 var key = newStats.Keys.ToArray()[i];
-                GameObject sep = Instantiate(separator, holder.transform, true);
+                GameObject sep = Object.Instantiate(separator, holder.transform, true);
                 infoObjects.Add(sep);
-                GameObject Object = Instantiate(thrust, holder.transform, true);
-                infoObjects.Add(Object);
+                GameObject obj = Object.Instantiate(thrust, holder.transform, true);
+                infoObjects.Add(obj);
 
-                Object.transform.GetChild(0).gameObject.GetComponent<TextAdapter>().Text = key;
-                newStats[key] = Object.transform.GetChild(1).gameObject.GetComponent<TextAdapter>();
+                obj.transform.GetChild(0).gameObject.GetComponent<TextAdapter>().Text = key;
+                newStats[key] = obj.transform.GetChild(1).gameObject.GetComponent<TextAdapter>();
 
                 if (i < 2)
                 {
-                    var rect = Object.transform.GetChild(0).GetComponent<RectTransform>();
-                    Object.GetComponent<VerticalLayoutGroup>().childControlWidth = false;
+                    var rect = obj.transform.GetChild(0).GetComponent<RectTransform>();
+                    obj.GetComponent<VerticalLayoutGroup>().childControlWidth = false;
                     rect.sizeDelta = new Vector2(150, rect.sizeDelta.y);
-                    Object.transform.GetChild(1).GetComponent<TextMeshProUGUI>().autoSizeTextContainer = true;
+                    obj.transform.GetChild(1).GetComponent<TextMeshProUGUI>().autoSizeTextContainer = true;
                 }
                 else if (key == "Angle")
                 {
-                    newStats["AngleTitle"] = Object.transform.GetChild(0).gameObject.GetComponent<TextAdapter>();
+                    newStats["AngleTitle"] = obj.transform.GetChild(0).gameObject.GetComponent<TextAdapter>();
                 }
             }
         }

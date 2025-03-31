@@ -40,10 +40,15 @@ namespace VanillaUpgrades
             Config.settings.allowTimeSlowdown.OnChange += TimeManipulation.ToggleChange;
             Config.settings.hideTopLeftButtonText.OnChange += HideTopLeftButtonText;
             
+            AdvancedInfo.Setup();
+            WorldClockDisplay.Setup();
+            
             UpdateInGame.execute += () =>
             {
                 if (hoverMode) TwrTo1();
             };
+            
+            MissionLogButton.Create();
         }
     }
 }
