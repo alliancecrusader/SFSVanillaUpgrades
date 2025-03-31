@@ -38,7 +38,7 @@ namespace VanillaUpgrades
                 ref double __result
             )
             {
-                // 1) Check that config setting is off, and if user is using Timewarp To. Don't run code if either.
+                // 1) Check whether config setting is off, and if user is using Timewarp To. Don't run code if either.
                 if (!Config.settings.stopTimewarpOnEncounter || TimewarpTo.warp != null)
                     return;
 
