@@ -26,7 +26,7 @@ namespace VanillaUpgrades
                 return;
             }
 
-            MsgDrawer.main.Log("Cannot hover while timewarping");
+            if (enable) MsgDrawer.main.Log("Cannot hover while timewarping");
         }
 
         public static void TwrTo1()
