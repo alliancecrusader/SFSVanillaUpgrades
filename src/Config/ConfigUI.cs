@@ -21,7 +21,7 @@ namespace VanillaUpgrades
             {
                 ("Display", transform1 => GetGUISettings(transform1, ConfigurationMenu.ContentSize)),
                 ("Units", transform1 => GetUnitsSettings(transform1, ConfigurationMenu.ContentSize)),
-                ("Misc", transform1 => GetMiscSettings(transform1, ConfigurationMenu.ContentSize)),
+                ("Misc", transform1 => GetMiscSettings(transform1, ConfigurationMenu.ContentSize))
             });
             // ("Windows", transform1 => GetWindowSettings(transform1, ConfigurationMenu.ContentSize))
         }
@@ -163,7 +163,7 @@ namespace VanillaUpgrades
             CreateToggleWithLabel(box, elementWidth, ToggleHeight, () => Config.settings.moreCameraMove,
                 () => Config.settings.moreCameraMove ^= true, 0, 0, "More Camera Movement");
             CreateSeparator(box, elementWidth - 20);
-            
+
             CreateToggleWithLabel(box, elementWidth, ToggleHeight, () => Config.settings.allowTimeSlowdown,
                 () => Config.settings.allowTimeSlowdown.Value ^= true, 0, 0, "Allow Time Slowdown");
             CreateToggleWithLabel(box, elementWidth, ToggleHeight, () => Config.settings.higherPhysicsWarp,

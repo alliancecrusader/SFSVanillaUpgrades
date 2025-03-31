@@ -17,7 +17,7 @@ namespace VanillaUpgrades
         {
             timewarpTo = __instance;
         }
-        
+
         /*
          Extends SFS's built-in "stop warp at altitude" system to also handle crossing from the orbit planet's SOI
          into a child's SOI, if enabled in Config.
@@ -47,7 +47,7 @@ namespace VanillaUpgrades
             }
 
             /*
-            Checks if we cross from 'orbit.Planet' to any of its satellites' SoI in the interval (timeOld, timeLimit). 
+            Checks if we cross from 'orbit.Planet' to any of its satellites' SoI in the interval (timeOld, timeLimit).
             Returns crossing time or PositiveInfinity.
             */
             private static double CheckParentToChildSoI(Orbit orbit, double timeOld, double timeLimit)
@@ -60,7 +60,7 @@ namespace VanillaUpgrades
                 return parent.satellites.Select(child => CheckSoICrossing(orbit, child, timeOld, timeLimit))
                     .Prepend(double.PositiveInfinity).Min();
             }
-            
+
             /*
             Detects crossing of the child's SoI boundary in [timeOld, timeLimit].
             If found, returns that crossing time via binary search; else PositiveInfinity.
@@ -95,12 +95,12 @@ namespace VanillaUpgrades
                 return high;
             }
 
-            
+
             /*
             True if the rocket is inside 'childPlanet' SoI at a given time, using orbit.GetLocation(time) to
             get rocket's local position, then offsetting by the orbit planet's global position.
             */
-            
+
             private static bool IsInsideSoI(Orbit orbit, Planet childPlanet, double time)
             {
                 // Acquire rocket's location at 'time'

@@ -12,6 +12,7 @@ namespace VanillaUpgrades
     partial class AdvancedInfo
     {
         private const string PositionKey = "VU.AdvancedInfoWindow";
+
         // --------------------------------------------------------------------
         // SEPARATE WINDOW UI CREATION
         // --------------------------------------------------------------------
@@ -19,51 +20,49 @@ namespace VanillaUpgrades
         {
             // Create the separate window using your existing factory
             advancedInfoWindow = Builder.CreateWindow(
-                parent:        windowHolder.transform,
-                ID:            1200,
-                width:         220,   // default vertical size
-                height:        350,
-                posX:          0,
-                posY:          0,
-                draggable:     true,
-                savePosition:  true,
-                opacity:       1f,
-                titleText:     "Advanced Info"
+                windowHolder.transform,
+                1200,
+                220, // default vertical size
+                350,
+                0,
+                0,
+                true,
+                true,
+                1f,
+                "Advanced Info"
             );
-            
+
             advancedInfoWindow.RegisterOnDropListener(advancedInfoWindow.ClampWindow);
             advancedInfoWindow.RegisterPermanentSaving(PositionKey);
-            
+
             // The window typically has a "Title" child; if you want to forcibly set its height:
             if (advancedInfoWindow.rectTransform.Find("Title") is RectTransform titleRect)
-            {
                 titleRect.sizeDelta = new Vector2(titleRect.sizeDelta.x, 30);
-            }
 
             // Create a main vertical layout group on the window so its contents
             // are placed below the title. We add some top padding to avoid overlap.
             advancedInfoWindow.CreateLayoutGroup(
-                type: Type.Vertical,
-                childAlignment:  TextAnchor.UpperLeft,
-                spacing:    0,
-                padding:    new RectOffset(0, 0, 0, 0) // top=30 for title bar
+                Type.Vertical,
+                TextAnchor.UpperLeft,
+                0,
+                new RectOffset(0, 0, 0, 0) // top=30 for title bar
             );
 
             // Now create the sub-containers for vertical/horizontal modes
             verticalContainer = Builder.CreateContainer(advancedInfoWindow);
             verticalContainer.CreateLayoutGroup(
-                type: Type.Vertical,
-                childAlignment:  TextAnchor.UpperLeft,
-                spacing:    0,
-                padding:    new RectOffset(0, 0, 0, 0)
+                Type.Vertical,
+                TextAnchor.UpperLeft,
+                0,
+                new RectOffset(0, 0, 0, 0)
             );
 
             horizontalContainer = Builder.CreateContainer(advancedInfoWindow);
             horizontalContainer.CreateLayoutGroup(
-                type: Type.Vertical,
-                childAlignment:  TextAnchor.UpperLeft,
-                spacing:    10,
-                padding:    new RectOffset(0, 0, 0, 0)
+                Type.Vertical,
+                TextAnchor.UpperLeft,
+                10,
+                new RectOffset(0, 0, 0, 0)
             );
 
             BuildVerticalUI(verticalContainer);
@@ -101,13 +100,13 @@ namespace VanillaUpgrades
             Builder.CreateSpace(parent, 1, 10);
 
 
-            var angleTitleLabel = UIExtensions.AlignedLabel(parent, 140, 30, "Angle:");
+            Label angleTitleLabel = UIExtensions.AlignedLabel(parent, 140, 30, "Angle:");
             // Value label
-            var angleValueLabel = UIExtensions.AlignedLabel(parent, 175, 30);
+            Label angleValueLabel = UIExtensions.AlignedLabel(parent, 175, 30);
 
             // Hook them up so the refactoring code can update each
             DisplayMap["AngleTitle"].vertical = angleTitleLabel;
-            DisplayMap["Angle"].vertical      = angleValueLabel;
+            DisplayMap["Angle"].vertical = angleValueLabel;
         }
 
         private static void BuildHorizontalUI(Container parent)
@@ -117,37 +116,37 @@ namespace VanillaUpgrades
 
             // 1) Apoapsis row
             Container apoRow = Builder.CreateContainer(parent);
-            apoRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, spacing: 5);
+            apoRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, 5);
             UIExtensions.AlignedLabel(apoRow, 150, 30, "Apoapsis:");
             Label apo = UIExtensions.AlignedLabel(apoRow, 175, 30);
             DisplayMap["Apoapsis"].horizontal = apo;
 
             // 2) Periapsis row
             Container periRow = Builder.CreateContainer(parent);
-            periRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, spacing: 5);
+            periRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, 5);
             UIExtensions.AlignedLabel(periRow, 150, 30, "Periapsis:");
             Label peri = UIExtensions.AlignedLabel(periRow, 175, 30);
             DisplayMap["Periapsis"].horizontal = peri;
 
             // 3) Eccentricity row
             Container eccRow = Builder.CreateContainer(parent);
-            eccRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, spacing: 5);
+            eccRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, 5);
             UIExtensions.AlignedLabel(eccRow, 150, 30, "Eccentricity:");
             Label ecc = UIExtensions.AlignedLabel(eccRow, 175, 30);
             DisplayMap["Eccentricity"].horizontal = ecc;
 
             // 4) Angle row
             Container angleRow = Builder.CreateContainer(parent);
-            angleRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, spacing: 5);
-            
+            angleRow.CreateLayoutGroup(Type.Horizontal, TextAnchor.UpperLeft, 5);
+
             // Title label
-            var angleTitleLabel = UIExtensions.AlignedLabel(angleRow, 150, 30, "Angle:");
+            Label angleTitleLabel = UIExtensions.AlignedLabel(angleRow, 150, 30, "Angle:");
             // Value label
-            var angleValueLabel = UIExtensions.AlignedLabel(angleRow, 175, 30);
+            Label angleValueLabel = UIExtensions.AlignedLabel(angleRow, 175, 30);
 
             // Hook them up so the refactoring code can update each
             DisplayMap["AngleTitle"].horizontal = angleTitleLabel;
-            DisplayMap["Angle"].horizontal      = angleValueLabel;
+            DisplayMap["Angle"].horizontal = angleValueLabel;
         }
 
         // --------------------------------------------------------------------
@@ -155,7 +154,7 @@ namespace VanillaUpgrades
         // --------------------------------------------------------------------
         private static void SetupVanillaUI()
         {
-            GameObject thrust    = GameObject.Find("Thrust (1)");
+            GameObject thrust = GameObject.Find("Thrust (1)");
             GameObject separator = GameObject.Find("Separator (1)");
             if (thrust == null || separator == null) return;
 
@@ -171,7 +170,7 @@ namespace VanillaUpgrades
                 // Insert a copy of "thrust"
                 GameObject row = Object.Instantiate(thrust, holder.transform, true);
                 row.name = key;
-                
+
                 // Disable layout controlling sizes of Apoapsis and Periapsis so large values aren't squished
                 if (key is "Apoapsis" or "Periapsis")
                 {
@@ -180,10 +179,10 @@ namespace VanillaUpgrades
                     rect.sizeDelta = new Vector2(150, rect.sizeDelta.y);
                     row.transform.GetChild(1).GetComponent<TextMeshProUGUI>().autoSizeTextContainer = true;
                 }
-                
+
                 VanillaInfoObjects.Add(row);
 
-                var titleText  = row.transform.GetChild(0).GetComponent<TextAdapter>();
+                var titleText = row.transform.GetChild(0).GetComponent<TextAdapter>();
                 var valueText = row.transform.GetChild(1).GetComponent<TextAdapter>();
 
                 // Set the top label to the key
@@ -192,7 +191,7 @@ namespace VanillaUpgrades
                 if (key == "Angle")
                 {
                     if (DisplayMap["AngleTitle"] != null)
-                        DisplayMap["AngleTitle"].vanillaTitle = titleText;  // for "Local Angle" etc.
+                        DisplayMap["AngleTitle"].vanillaTitle = titleText; // for "Local Angle" etc.
                     if (DisplayMap["Angle"] != null)
                         DisplayMap["Angle"].vanilla = valueText;
                 }

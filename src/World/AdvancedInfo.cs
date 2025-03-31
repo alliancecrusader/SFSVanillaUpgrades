@@ -13,32 +13,23 @@ namespace VanillaUpgrades
 {
     public static partial class AdvancedInfo
     {
-        // -- Holds references for each field's UI in vanilla inline, horizontal, and vertical
-        private class DisplayRefs
-        {
-            public TextAdapter vanilla;       // e.g. right label in vanilla UI
-            public TextAdapter vanillaTitle;  // special case if needed for "Angle"
-            public Label       horizontal;    // readout label in horizontal layout
-            public Label       vertical;      // readout label in vertical layout
-        }
-
         // Key fields in a single map
         private static readonly Dictionary<string, DisplayRefs> DisplayMap = new()
         {
-            { "Apoapsis",     new DisplayRefs() },
-            { "Periapsis",    new DisplayRefs() },
+            { "Apoapsis", new DisplayRefs() },
+            { "Periapsis", new DisplayRefs() },
             { "Eccentricity", new DisplayRefs() },
-            { "AngleTitle",   new DisplayRefs() }, // for special "Angle" naming
-            { "Angle",        new DisplayRefs() },
+            { "AngleTitle", new DisplayRefs() }, // for special "Angle" naming
+            { "Angle", new DisplayRefs() }
         };
 
         // Inline UI objects to hide/show
         private static readonly List<GameObject> VanillaInfoObjects = new();
 
         private static GameObject windowHolder;
-        private static Window     advancedInfoWindow;
-        private static Container  verticalContainer;
-        private static Container  horizontalContainer;
+        private static Window advancedInfoWindow;
+        private static Container verticalContainer;
+        private static Container horizontalContainer;
 
         // --------------------------------------------------------------------
         // SETUP / INITIALIZATION
@@ -101,8 +92,8 @@ namespace VanillaUpgrades
         {
             if (PlayerController.main == null) return;
 
-            var showAdvanced = (WorldManager.currentRocket != null && Config.settings.showAdvanced);
-            bool separate     = Config.settings.showAdvancedInSeparateWindow;
+            var showAdvanced = WorldManager.currentRocket != null && Config.settings.showAdvanced;
+            bool separate = Config.settings.showAdvancedInSeparateWindow;
 
             // Toggle the separate window GameObject
             windowHolder.SetActive(showAdvanced && separate);
@@ -160,7 +151,7 @@ namespace VanillaUpgrades
 
             bool separate = Config.settings.showAdvancedInSeparateWindow;
             bool isHorizontal = Config.settings.horizontalMode;
-            
+
             // If this is the dynamic "AngleTitle" field, 
             // then in the separate window we append ":"
             // In vanilla we omit the colon
@@ -168,7 +159,7 @@ namespace VanillaUpgrades
             {
                 // e.g. "Angle" -> "Angle:" in the window
                 // or "Local Angle" -> "Local Angle:"
-                var finalTitle = separate ? (value + ":") : value;
+                var finalTitle = separate ? value + ":" : value;
 
                 if (separate)
                 {
@@ -187,6 +178,7 @@ namespace VanillaUpgrades
                     if (refs.vanillaTitle != null)
                         refs.vanillaTitle.Text = finalTitle;
                 }
+
                 return; // done
             }
 
@@ -207,13 +199,8 @@ namespace VanillaUpgrades
             {
                 // Show in vanilla
                 if (fieldKey == "AngleTitle" && refs.vanillaTitle != null)
-                {
                     refs.vanillaTitle.Text = value;
-                }
-                else if (refs.vanilla != null)
-                {
-                    refs.vanilla.Text = value;
-                }
+                else if (refs.vanilla != null) refs.vanilla.Text = value;
             }
         }
 
@@ -225,11 +212,11 @@ namespace VanillaUpgrades
             out string angle
         )
         {
-            apoapsis     = "0.0m";
-            periapsis    = "0.0m";
+            apoapsis = "0.0m";
+            periapsis = "0.0m";
             eccentricity = "0.000";
-            angleTitle   = "Angle";
-            angle        = "0.0°";
+            angleTitle = "Angle";
+            angle = "0.0°";
 
             Rocket rocket = WorldManager.currentRocket;
             if (rocket == null) return;
@@ -239,7 +226,7 @@ namespace VanillaUpgrades
                 var planetRadius = rocket.location.planet.Value.Radius;
                 apoapsis = (orbit.apoapsis - planetRadius).ToDistanceString();
 
-                var realPeri = orbit.periapsis < planetRadius ? 0 : (orbit.periapsis - planetRadius);
+                var realPeri = orbit.periapsis < planetRadius ? 0 : orbit.periapsis - planetRadius;
                 periapsis = realPeri.ToDistanceString();
 
                 eccentricity = orbit.ecc.ToString("F3", CultureInfo.InvariantCulture);
@@ -253,8 +240,8 @@ namespace VanillaUpgrades
                 Mathf.Sin((float)loc.position.AngleRadians)
             ).Rotate_Radians(270 * Mathf.Deg2Rad);
 
-            var facing    = new Vector2(Mathf.Cos(globalAngle * Mathf.Deg2Rad), Mathf.Sin(globalAngle * Mathf.Deg2Rad));
-            var   trueAngle = Vector2.SignedAngle(facing, orbitAngleVector);
+            var facing = new Vector2(Mathf.Cos(globalAngle * Mathf.Deg2Rad), Mathf.Sin(globalAngle * Mathf.Deg2Rad));
+            var trueAngle = Vector2.SignedAngle(facing, orbitAngleVector);
 
             var planetSurface = loc.planet.TimewarpRadius_Ascend - loc.planet.Radius;
             if (loc.TerrainHeight < planetSurface)
@@ -265,10 +252,19 @@ namespace VanillaUpgrades
             else
             {
                 angleTitle = "Angle";
-                angle = (globalAngle > 180)
+                angle = globalAngle > 180
                     ? (360 - globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°"
                     : (-globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°";
             }
+        }
+
+        // -- Holds references for each field's UI in vanilla inline, horizontal, and vertical
+        private class DisplayRefs
+        {
+            public Label horizontal; // readout label in horizontal layout
+            public TextAdapter vanilla; // e.g. right label in vanilla UI
+            public TextAdapter vanillaTitle; // special case if needed for "Angle"
+            public Label vertical; // readout label in vertical layout
         }
     }
 }

@@ -70,10 +70,11 @@ namespace VanillaUpgrades
                 rectTransform.sizeDelta = new Vector2(0, 0);
 
                 Vector2 canvasSize = UIExtensions.ActualCanvasSize;
-                Vector2Int windowSize = Vector2Int.Min(new ((int)(canvasSize.x * 0.7f),
-                    (int)canvasSize.y - 200), new(1200, 1000));
-                
-                Window scroll = Builder.CreateWindow(rectTransform, Builder.GetRandomID(), windowSize.x, windowSize.y, 0, windowSize.y / 2, false, false,
+                Vector2Int windowSize = Vector2Int.Min(new Vector2Int((int)(canvasSize.x * 0.7f),
+                    (int)canvasSize.y - 200), new Vector2Int(1200, 1000));
+
+                Window scroll = Builder.CreateWindow(rectTransform, Builder.GetRandomID(), windowSize.x, windowSize.y,
+                    0, windowSize.y / 2, false, false,
                     1, "Mission Log");
 
                 // Populate the window with the mission entries.

@@ -1,11 +1,11 @@
 ﻿using HarmonyLib;
 using SFS;
+using SFS.Builds;
 using SFS.Parts.Modules;
 using SFS.UI;
 using SFS.World;
-using UnityEngine;
-using SFS.Builds;
 using SFS.WorldBase;
+using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
@@ -62,10 +62,11 @@ namespace VanillaUpgrades
             var thrustVal = thrust.magnitude;
 
             ___thrustText.Text = thrustVal.ToThrustString().Split(':')[1];
-            ___thrustToWeightText.Text = (mass != 0 ? thrustVal / mass * 9.8f / localGravity : 0).ToTwrString().Split(':')[1];
+            ___thrustToWeightText.Text =
+                (mass != 0 ? thrustVal / mass * 9.8f / localGravity : 0).ToTwrString().Split(':')[1];
         }
     }
-    
+
     // TWR in build mode will simply be calculated using the gravity of the planet the launchpad is on.
     [HarmonyPatch(typeof(BuildStatsDrawer), "Draw")]
     internal class DisplayCorrectTWRInBuild

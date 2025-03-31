@@ -44,27 +44,27 @@ namespace VanillaUpgrades
             AddOnKeyDown_World(main.stopTimewarp, () => TimeManipulation.StopTimewarp(true));
             AddOnKeyDown_World(main.throttle01, WorldManager.Throttle01);
             AddOnKeyDown_World(main.hoverMode, HoverHandler.ToggleHoverMode);
-            AddOnKeyDown_World(main.toggleTorque, VanillaUpgrades.ToggleTorque.Toggle);
+            AddOnKeyDown_World(main.toggleTorque, ToggleTorque.Toggle);
         }
 
         public override void CreateUI()
         {
             CreateUI_Text("VanillaUpgrades Keybindings");
-            
+
             CreateUI_Keybinding(hideUI, KeyCode.F2, "Hide UI");
             CreateUI_Keybinding(toggleWindowed, KeyCode.F11, "Toggle Windowed Mode");
             CreateUI_Space();
-            
+
             CreateUI_Text("Build");
-            
+
             CreateUI_Keybinding(toggleSymmetry, KeyCode.Z, "Toggle symmetry mode");
             CreateUI_Keybinding(toggleInterior, KeyCode.X, "Toggle interior view");
             CreateUI_Keybinding(openCategories, KeyCode.Tab, "Open Pick Categories");
             CreateUI_Keybinding(launch, KeyCode.L, "Launch");
             CreateUI_Space();
-            
+
             CreateUI_Text("World");
-            
+
             CreateUI_Keybinding(stopTimewarp, KeyCode.Slash, "Stop Timewarp");
             CreateUI_Keybinding(throttle01, KeyCode.C, "Throttle To 0.1%");
             CreateUI_Keybinding(hoverMode, KeyCode.V, "Hover mode");

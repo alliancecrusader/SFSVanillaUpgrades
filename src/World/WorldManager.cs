@@ -9,7 +9,7 @@ namespace VanillaUpgrades
     [HarmonyPatch(typeof(GameManager))]
     public class UpdateInGame
     {
-        public static Action execute = () => {};
+        public static Action execute = () => { };
 
         [HarmonyPatch("Update")]
         public static void Postfix()
@@ -17,7 +17,7 @@ namespace VanillaUpgrades
             execute.Invoke();
         }
     }
-    
+
     internal static partial class WorldManager
     {
         public static Rocket currentRocket;
@@ -35,19 +35,19 @@ namespace VanillaUpgrades
         {
             UpdatePlayer();
             HideTopLeftButtonText();
-            
+
             PlayerController.main.player.OnChange += UpdatePlayer;
             Config.settings.allowTimeSlowdown.OnChange += TimeManipulation.ToggleChange;
             Config.settings.hideTopLeftButtonText.OnChange += HideTopLeftButtonText;
-            
+
             AdvancedInfo.Setup();
             WorldClockDisplay.Setup();
-            
+
             UpdateInGame.execute += () =>
             {
                 if (hoverMode) TwrTo1();
             };
-            
+
             MissionLogButton.Create();
         }
     }

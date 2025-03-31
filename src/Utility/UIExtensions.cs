@@ -28,11 +28,11 @@ namespace VanillaUpgrades.Utility
                 canvas ??= GetCanvasRect();
                 return new Vector2(canvas.rect.width * canvas.lossyScale.x, canvas.rect.height * canvas.lossyScale.y);
             }
-            
         }
 
         public static Label AlignedLabel(Transform parent, int width, int height, string labelText = "",
-            TextAlignmentOptions textAlignment = TextAlignmentOptions.MidlineLeft,  bool autoFontResize = true, float fontSize = 30f)
+            TextAlignmentOptions textAlignment = TextAlignmentOptions.MidlineLeft, bool autoFontResize = true,
+            float fontSize = 30f)
         {
             Label label = Builder.CreateLabel(parent, width, height, text: labelText);
             label.TextAlignment = textAlignment;

@@ -45,7 +45,8 @@ namespace VanillaUpgrades
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             MethodInfo method =
-                typeof(ExitMainMenu_BuildPauseMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
+                typeof(ExitMainMenu_BuildPauseMenu).GetMethod(nameof(DoStuff),
+                    BindingFlags.Public | BindingFlags.Static);
             MethodInfo toArray = typeof(List<MenuElement>).GetMethod(nameof(List<MenuElement>.ToArray),
                 BindingFlags.Public | BindingFlags.Instance);
             foreach (CodeInstruction instruction in code)
@@ -77,7 +78,8 @@ namespace VanillaUpgrades
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             MethodInfo method =
-                typeof(ExitMainMenu_WorldPauseMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
+                typeof(ExitMainMenu_WorldPauseMenu).GetMethod(nameof(DoStuff),
+                    BindingFlags.Public | BindingFlags.Static);
             MethodInfo toArray = typeof(List<MenuElement>).GetMethod(nameof(List<MenuElement>.ToArray),
                 BindingFlags.Public | BindingFlags.Instance);
             foreach (CodeInstruction instruction in code)

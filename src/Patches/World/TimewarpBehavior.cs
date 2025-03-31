@@ -16,7 +16,7 @@ namespace VanillaUpgrades
             __result = false;
         }
     }
-    
+
     [HarmonyPatch(typeof(WorldTime))]
     public class RaiseMaxPhysicsTimewarp
     {
@@ -38,7 +38,7 @@ namespace VanillaUpgrades
             return false;
         }
     }
-    
+
     [HarmonyPatch(typeof(FlightInfoDrawer), "Update")]
     internal class LimitDecimalsOfTimewarpText
     {

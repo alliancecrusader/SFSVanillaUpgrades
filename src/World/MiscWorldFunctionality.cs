@@ -22,8 +22,8 @@ namespace VanillaUpgrades
 
         private static void HideTopLeftButtonText()
         {
-            GameObject TopLeftPanel = GameObject.Find("Top Left Panel");
-            foreach (TextAdapter textAdapter in TopLeftPanel.gameObject.GetComponentsInChildren<TextAdapter>(true))
+            GameObject topLeftPanel = GameObject.Find("Top Left Panel");
+            foreach (TextAdapter textAdapter in topLeftPanel.gameObject.GetComponentsInChildren<TextAdapter>(true))
                 textAdapter.gameObject.SetActive(!Config.settings.hideTopLeftButtonText);
         }
     }
