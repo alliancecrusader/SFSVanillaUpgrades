@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using ModLoader.Helpers;
 using SFS.UI;
 using SFS.UI.ModGUI;
@@ -13,100 +13,117 @@ namespace VanillaUpgrades
 {
     public static partial class AdvancedInfo
     {
-        private const string PositionKey = "VU.AdvancedInfoWindow";
-
-        private static Dictionary<string, TextAdapter> newStats = new()
+        // -- Holds references for each field's UI in vanilla inline, horizontal, and vertical
+        private class DisplayRefs
         {
-            { "Apoapsis", null },
-            { "Periapsis", null },
-            { "Eccentricity", null },
-            { "Angle", null },
-            { "AngleTitle", null }
+            public TextAdapter vanilla;       // e.g. right label in vanilla UI
+            public TextAdapter vanillaTitle;  // special case if needed for "Angle"
+            public Label       horizontal;    // readout label in horizontal layout
+            public Label       vertical;      // readout label in vertical layout
+        }
+
+        // Key fields in a single map
+        private static readonly Dictionary<string, DisplayRefs> DisplayMap = new()
+        {
+            { "Apoapsis",     new DisplayRefs() },
+            { "Periapsis",    new DisplayRefs() },
+            { "Eccentricity", new DisplayRefs() },
+            { "AngleTitle",   new DisplayRefs() }, // for special "Angle" naming
+            { "Angle",        new DisplayRefs() },
         };
 
-        private static readonly List<GameObject> infoObjects = new();
+        // Inline UI objects to hide/show
+        private static readonly List<GameObject> VanillaInfoObjects = new();
 
-        public static GameObject windowHolder;
-        private static Window advancedInfoWindow;
-        private static Container horizontal;
+        private static GameObject windowHolder;
+        private static Window     advancedInfoWindow;
+        private static Container  verticalContainer;
+        private static Container  horizontalContainer;
 
-        private static Dictionary<string, Label> infoLabels = new()
-        {
-            { "apopsisHorizontal", null },
-            { "apoapsisVertical", null },
-            { "periapsisHorizontal", null },
-            { "periapsisVertical", null },
-            { "eccentricityHorizontal", null },
-            { "eccentricityVertical", null },
-            { "angleHorizontal", null },
-            { "angleVertical", null },
-            { "angleTitleHorizontal", null },
-            { "angleTitleVertical", null }
-        };
-
-        private static Container vertical;
-
+        // --------------------------------------------------------------------
+        // SETUP / INITIALIZATION
+        // --------------------------------------------------------------------
         public static void Setup()
         {
+            // Create a parent GameObject for the separate window UI
             windowHolder = UIExtensions.ZeroedHolder(Builder.SceneToAttach.CurrentScene, "AdvancedInfoHolder");
 
-            AddToVanillaGUI();
-            CreateWindow();
-            VerticalGUI();
-            HorizontalGUI();
-            CheckHorizontalToggle();
+            // Build references for the vanilla inline UI
+            SetupVanillaUI();
 
+            // Build references for the separate window (both vertical/horizontal)
+            CreateWindowUI();
 
+            // Event listeners
             PlayerController.main.player.OnChange += OnPlayerChange;
             Config.settings.horizontalMode.OnChange += CheckHorizontalToggle;
-            Config.settings.persistentVars.windowScale.OnChange += () => advancedInfoWindow.ScaleWindow();
+            Config.settings.persistentVars.windowScale.OnChange += () => advancedInfoWindow?.ScaleWindow();
             Config.settings.showAdvanced.OnChange += OnToggle;
             Config.settings.showAdvancedInSeparateWindow.OnChange += OnToggle;
 
+            // Initial toggle
             OnToggle();
 
+            // Periodic update
             UpdateInGame.execute += Update;
             SceneHelper.OnWorldSceneUnloaded += OnDestroy;
         }
 
-        private static void Update()
-        {
-            if (WorldManager.currentRocket == null) return;
-            if (Config.settings.showAdvancedInSeparateWindow)
-                RefreshLabels(infoLabels);
-            else RefreshLabels(newStats);
-        }
-
         private static void OnDestroy()
         {
-            infoObjects.Clear();
+            VanillaInfoObjects.Clear();
+
+            // Unsubscribe from events
             PlayerController.main.player.OnChange -= OnPlayerChange;
             Config.settings.horizontalMode.OnChange -= CheckHorizontalToggle;
-            Config.settings.persistentVars.windowScale.OnChange -= () => advancedInfoWindow.ScaleWindow();
+            Config.settings.persistentVars.windowScale.OnChange -= () => advancedInfoWindow?.ScaleWindow();
             Config.settings.showAdvanced.OnChange -= OnToggle;
             Config.settings.showAdvancedInSeparateWindow.OnChange -= OnToggle;
 
-            infoLabels = new Dictionary<string, Label>
-            {
-                { "apopsisHorizontal", null },
-                { "apoapsisVertical", null },
-                { "periapsisHorizontal", null },
-                { "periapsisVertical", null },
-                { "eccentricityHorizontal", null },
-                { "eccentricityVertical", null },
-                { "angleHorizontal", null },
-                { "angleVertical", null },
-                { "angleTitleHorizontal", null },
-                { "angleTitleVertical", null }
-            };
-            newStats = new Dictionary<string, TextAdapter>
-            {
-                { "Apoapsis", null },
-                { "Periapsis", null },
-                { "Eccentricity", null },
-                { "Angle", null },
-                { "AngleTitle", null }
-            };
+            // Clear references
+            foreach (var key in DisplayMap.Keys.ToList())
+                DisplayMap[key] = new DisplayRefs();
+        }
+
+        // --------------------------------------------------------------------
+        // MAIN UPDATE
+        // --------------------------------------------------------------------
+        private static void Update()
+        {
+            if (WorldManager.currentRocket == null) return;
+            RefreshAllFields();
+        }
+
+        // --------------------------------------------------------------------
+        // TOGGLES & EVENT HANDLERS
+        // --------------------------------------------------------------------
+        private static void OnToggle()
+        {
+            if (PlayerController.main == null) return;
+
+            var showAdvanced = (WorldManager.currentRocket != null && Config.settings.showAdvanced);
+            bool separate     = Config.settings.showAdvancedInSeparateWindow;
+
+            // Toggle the separate window GameObject
+            windowHolder.SetActive(showAdvanced && separate);
+
+            // Toggle the vanilla inline objects
+            VanillaInfoObjects.ForEach(go => go.SetActive(showAdvanced && !separate));
+        }
+
+        private static void CheckHorizontalToggle()
+        {
+            if (advancedInfoWindow == null) return;
+
+            bool isHorizontal = Config.settings.horizontalMode;
+
+            verticalContainer?.gameObject.SetActive(!isHorizontal);
+            horizontalContainer?.gameObject.SetActive(isHorizontal);
+
+            // Adjust the window size for each layout
+            advancedInfoWindow.Size = isHorizontal ? new Vector2(350, 230) : new Vector2(220, 350);
+
+            advancedInfoWindow.ClampWindow();
         }
 
         private static void OnPlayerChange()
@@ -116,99 +133,142 @@ namespace VanillaUpgrades
             ToggleTorque.Set(false);
         }
 
-        private static void OnToggle()
+        // --------------------------------------------------------------------
+        // REFRESHING
+        // --------------------------------------------------------------------
+        private static void RefreshAllFields()
         {
-            if (PlayerController.main == null) return;
-            var value = WorldManager.currentRocket != null && Config.settings.showAdvanced;
-            windowHolder.SetActive(value && Config.settings.showAdvancedInSeparateWindow);
-            infoObjects.ForEach(e => e.SetActive(value && !Config.settings.showAdvancedInSeparateWindow));
+            GetOrbitValues(
+                out var apo,
+                out var peri,
+                out var ecc,
+                out var angleTitle,
+                out var angle
+            );
+
+            SetField("Apoapsis", apo);
+            SetField("Periapsis", peri);
+            SetField("Eccentricity", ecc);
+            SetField("AngleTitle", angleTitle);
+            SetField("Angle", angle);
         }
 
-        private static void CheckHorizontalToggle()
+        private static void SetField(string fieldKey, string value)
         {
-            if (Config.settings.horizontalMode)
+            if (!DisplayMap.TryGetValue(fieldKey, out DisplayRefs refs) || refs == null)
+                return;
+
+            bool separate = Config.settings.showAdvancedInSeparateWindow;
+            bool isHorizontal = Config.settings.horizontalMode;
+            
+            // If this is the dynamic "AngleTitle" field, 
+            // then in the separate window we append ":"
+            // In vanilla we omit the colon
+            if (fieldKey == "AngleTitle")
             {
-                vertical.gameObject.SetActive(false);
-                horizontal.gameObject.SetActive(true);
-                advancedInfoWindow.Size = new Vector2(350, 230);
+                // e.g. "Angle" -> "Angle:" in the window
+                // or "Local Angle" -> "Local Angle:"
+                var finalTitle = separate ? (value + ":") : value;
+
+                if (separate)
+                {
+                    switch (isHorizontal)
+                    {
+                        case true when refs.horizontal != null:
+                            refs.horizontal.Text = finalTitle;
+                            break;
+                        case false when refs.vertical != null:
+                            refs.vertical.Text = finalTitle;
+                            break;
+                    }
+                }
+                else
+                {
+                    if (refs.vanillaTitle != null)
+                        refs.vanillaTitle.Text = finalTitle;
+                }
+                return; // done
+            }
+
+            if (separate)
+            {
+                switch (isHorizontal)
+                {
+                    // Show in separate window
+                    case true when refs.horizontal != null:
+                        refs.horizontal.Text = value;
+                        break;
+                    case false when refs.vertical != null:
+                        refs.vertical.Text = value;
+                        break;
+                }
             }
             else
             {
-                horizontal.gameObject.SetActive(false);
-                vertical.gameObject.SetActive(true);
-                advancedInfoWindow.Size = new Vector2(220, 350);
+                // Show in vanilla
+                if (fieldKey == "AngleTitle" && refs.vanillaTitle != null)
+                {
+                    refs.vanillaTitle.Text = value;
+                }
+                else if (refs.vanilla != null)
+                {
+                    refs.vanilla.Text = value;
+                }
             }
-
-            advancedInfoWindow.ClampWindow();
         }
 
-        private static void GetValues(out string apoapsis, out string periapsis, out string eccentricity,
-            out string angleTitle, out string angle)
+        private static void GetOrbitValues(
+            out string apoapsis,
+            out string periapsis,
+            out string eccentricity,
+            out string angleTitle,
+            out string angle
+        )
         {
+            apoapsis     = "0.0m";
+            periapsis    = "0.0m";
+            eccentricity = "0.000";
+            angleTitle   = "Angle";
+            angle        = "0.0°";
+
             Rocket rocket = WorldManager.currentRocket;
+            if (rocket == null) return;
+
             if (rocket.physics.GetTrajectory().paths[0] is Orbit orbit)
             {
-                apoapsis = (orbit.apoapsis - rocket.location.planet.Value.Radius)
-                    .ToDistanceString();
+                var planetRadius = rocket.location.planet.Value.Radius;
+                apoapsis = (orbit.apoapsis - planetRadius).ToDistanceString();
 
-                var truePeriapsis =
-                    orbit.periapsis < rocket.location.planet.Value.Radius
-                        ? 0
-                        : orbit.periapsis - rocket.location.planet.Value.Radius;
-                periapsis = truePeriapsis.ToDistanceString();
+                var realPeri = orbit.periapsis < planetRadius ? 0 : (orbit.periapsis - planetRadius);
+                periapsis = realPeri.ToDistanceString();
 
                 eccentricity = orbit.ecc.ToString("F3", CultureInfo.InvariantCulture);
             }
-            else
-            {
-                apoapsis = "0.0m";
-                periapsis = "0.0m";
-                eccentricity = "0.000";
-            }
 
             var globalAngle = rocket.partHolder.transform.eulerAngles.z;
-            Location location = rocket.location.Value;
+            Location loc = rocket.location.Value;
 
-            Vector2 orbitAngleVector =
-                new Vector2(Mathf.Cos((float)location.position.AngleRadians),
-                    Mathf.Sin((float)location.position.AngleRadians)).Rotate_Radians(270 * Mathf.Deg2Rad);
-            var facing = new Vector2(Mathf.Cos(globalAngle * Mathf.Deg2Rad), Mathf.Sin(globalAngle * Mathf.Deg2Rad));
-            var trueAngle = Vector2.SignedAngle(facing, orbitAngleVector);
+            Vector2 orbitAngleVector = new Vector2(
+                Mathf.Cos((float)loc.position.AngleRadians),
+                Mathf.Sin((float)loc.position.AngleRadians)
+            ).Rotate_Radians(270 * Mathf.Deg2Rad);
 
-            if (location.TerrainHeight < location.planet.TimewarpRadius_Ascend - rocket.location.planet.Value.Radius)
+            var facing    = new Vector2(Mathf.Cos(globalAngle * Mathf.Deg2Rad), Mathf.Sin(globalAngle * Mathf.Deg2Rad));
+            var   trueAngle = Vector2.SignedAngle(facing, orbitAngleVector);
+
+            var planetSurface = loc.planet.TimewarpRadius_Ascend - loc.planet.Radius;
+            if (loc.TerrainHeight < planetSurface)
             {
                 angle = trueAngle.ToString("F1", CultureInfo.InvariantCulture) + "°";
                 angleTitle = "Local Angle";
-                return;
             }
-
-            if (globalAngle > 180) angle = (360 - globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°";
-            else angle = (-globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°";
-
-            angleTitle = "Angle";
-        }
-
-        private static void RefreshLabels<T>(Dictionary<string, T> texts)
-        {
-            GetValues(out var apo, out var peri, out var ecc, out var angTitle, out var ang);
-
-            if (texts is Dictionary<string, Label> labelDict)
+            else
             {
-                labelDict["apoapsisVertical"].Text = labelDict["apoapsisHorizontal"].Text = apo;
-                labelDict["periapsisVertical"].Text = labelDict["periapsisHorizontal"].Text = peri;
-                labelDict["eccentricityVertical"].Text = labelDict["eccentricityHorizontal"].Text = ecc;
-                labelDict["angleVertical"].Text = labelDict["angleHorizontal"].Text = ang;
-                labelDict["angleTitleVertical"].Text = labelDict["angleTitleHorizontal"].Text = angTitle;
-                return;
+                angleTitle = "Angle";
+                angle = (globalAngle > 180)
+                    ? (360 - globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°"
+                    : (-globalAngle).ToString("F1", CultureInfo.InvariantCulture) + "°";
             }
-
-            if (texts is not Dictionary<string, TextAdapter> adapterDict)
-                throw new ArgumentNullException(nameof(adapterDict));
-            adapterDict["Apoapsis"].Text = apo;
-            adapterDict["Periapsis"].Text = peri;
-            adapterDict["Eccentricity"].Text = ecc;
-            adapterDict["Angle"].Text = ang;
-            adapterDict["AngleTitle"].Text = angTitle;
         }
     }
 }
