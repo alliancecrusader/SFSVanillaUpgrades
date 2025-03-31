@@ -1,8 +1,23 @@
-﻿using SFS.World;
+﻿using System;
+using HarmonyLib;
+using SFS.World;
 using static VanillaUpgrades.HoverHandler;
 
 namespace VanillaUpgrades
 {
+    // Hook for things that need to run every frame in-game.
+    [HarmonyPatch(typeof(GameManager))]
+    public class UpdateInGame
+    {
+        public static Action execute = () => {};
+
+        [HarmonyPatch("Update")]
+        public static void Postfix()
+        {
+            execute.Invoke();
+        }
+    }
+    
     internal static partial class WorldManager
     {
         public static Rocket currentRocket;
@@ -20,9 +35,11 @@ namespace VanillaUpgrades
         {
             UpdatePlayer();
             HideTopLeftButtonText();
+            
             PlayerController.main.player.OnChange += UpdatePlayer;
             Config.settings.allowTimeSlowdown.OnChange += TimeManipulation.ToggleChange;
             Config.settings.hideTopLeftButtonText.OnChange += HideTopLeftButtonText;
+            
             UpdateInGame.execute += () =>
             {
                 if (hoverMode) TwrTo1();

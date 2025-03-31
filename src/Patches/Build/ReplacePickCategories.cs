@@ -1,82 +1,17 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
-using SFS;
 using SFS.Builds;
-using SFS.Parts.Modules;
 using SFS.UI;
 using SFS.UI.ModGUI;
-using SFS.World;
-using SFS.WorldBase;
 using UnityEngine;
 using UnityEngine.UI;
 using static SFS.UI.ModGUI.Builder;
 using Button = SFS.UI.ModGUI.Button;
 using Type = SFS.UI.ModGUI.Type;
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable UnusedMember.Local
-
 namespace VanillaUpgrades
 {
-    [HarmonyPatch(typeof(PartGrid), "UpdateAdaptation")]
-    internal class StopAdaptation
-    {
-        private static bool Prefix()
-        {
-            return !BuildSettings.noAdaptation || BuildSettings.noAdaptOverride;
-        }
-    }
-
-    [HarmonyPatch(typeof(HoldGrid), "TakePart_PickGrid")]
-    internal class AdaptPartPicker
-    {
-        private static void Prefix()
-        {
-            BuildSettings.noAdaptOverride = true;
-        }
-
-        private static void Postfix()
-        {
-            BuildSettings.noAdaptOverride = false;
-        }
-    }
-
-
-    [HarmonyPatch(typeof(AdaptModule), "UpdateAdaptation")]
-    internal class FixCucumber
-    {
-        private static bool Prefix()
-        {
-            return !BuildSettings.noAdaptation || BuildSettings.noAdaptOverride;
-        }
-    }
-
-    [HarmonyPatch(typeof(MagnetModule), nameof(MagnetModule.GetAllSnapOffsets))]
-    internal class KillMagnet
-    {
-        private static bool Prefix(MagnetModule A, MagnetModule B, float snapDistance, ref List<Vector2> __result)
-        {
-            if (!BuildSettings.noSnapping)
-                return true;
-            __result = new List<Vector2>();
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(BuildStatsDrawer), "Draw")]
-    internal class DisplayCorrectTWR
-    {
-        private static void Postfix(float ___mass, float ___thrust, TextAdapter ___thrustToWeightText)
-        {
-            SpaceCenterData spaceCenter = Base.planetLoader.spaceCenter;
-            var gravityAtLaunchpad = spaceCenter.address.GetPlanet()
-                .GetGravity(spaceCenter.LaunchPadLocation.position.magnitude);
-            var TWR = ___mass != 0 ? ___thrust * 9.8 / (___mass * gravityAtLaunchpad) : 0;
-            ___thrustToWeightText.Text = TWR.ToString(2, true);
-        }
-    }
-
     [HarmonyPatch(typeof(PickCategoriesMenu))]
     internal static class ReplacePickCategories
     {

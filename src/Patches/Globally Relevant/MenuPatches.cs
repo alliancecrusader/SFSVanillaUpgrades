@@ -39,13 +39,13 @@ namespace VanillaUpgrades
     }
 
     [HarmonyPatch(typeof(BuildManager), nameof(BuildManager.OpenMenu))]
-    internal static class BuildManager_OpenMenu
+    internal static class ExitMainMenu_BuildPauseMenu
     {
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             MethodInfo method =
-                typeof(BuildManager_OpenMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
+                typeof(ExitMainMenu_BuildPauseMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
             MethodInfo toArray = typeof(List<MenuElement>).GetMethod(nameof(List<MenuElement>.ToArray),
                 BindingFlags.Public | BindingFlags.Instance);
             foreach (CodeInstruction instruction in code)
@@ -72,12 +72,12 @@ namespace VanillaUpgrades
     }
 
     [HarmonyPatch(typeof(GameManager), nameof(GameManager.OpenMenu))]
-    internal static class GameManager_OpenMenu
+    internal static class ExitMainMenu_WorldPauseMenu
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             MethodInfo method =
-                typeof(GameManager_OpenMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
+                typeof(ExitMainMenu_WorldPauseMenu).GetMethod(nameof(DoStuff), BindingFlags.Public | BindingFlags.Static);
             MethodInfo toArray = typeof(List<MenuElement>).GetMethod(nameof(List<MenuElement>.ToArray),
                 BindingFlags.Public | BindingFlags.Instance);
             foreach (CodeInstruction instruction in code)
