@@ -27,7 +27,7 @@ namespace VanillaUpgrades.Patches
         {
             if (!Config.settings.moreCameraZoom) return true;
             if (PlayerController.main.player.Value == null) return true;
-            __result = Mathf.Clamp(newValue, 0.05f, 2.5E+10f);
+            __result = Mathf.Clamp(newValue, 0.05f, 2.5E+12f);
             return false;
         }
     }
